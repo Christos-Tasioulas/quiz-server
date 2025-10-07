@@ -38,3 +38,4 @@ build/
 *.p12
 *.der
 *.keystore
+*.crt
