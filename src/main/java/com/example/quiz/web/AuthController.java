@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -42,7 +45,12 @@ public class AuthController {
             AuthResponse authResponse = authService.registerUser(user);
             Cookie jwtCookie = createCookie(authResponse.token(), 7 * 24 * 60 * 60);
             response.addCookie(jwtCookie);
-            return ResponseEntity.ok().body(authResponse);
+            URI location = ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
+                    .path("/api/users/{id}")
+                    .buildAndExpand(authResponse.user().getId())
+                    .toUri();
+            return ResponseEntity.created(location).body(authResponse);
         } catch (IllegalArgumentException | UnauthorizedException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
