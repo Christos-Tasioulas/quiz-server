@@ -50,6 +50,13 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/userByEmail/{email}")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
+    public ResponseEntity<?> getUserByEmail(@PathVariable String email) {
+        UserResponse user = userService.getUserByEmail(email);
+        return ResponseEntity.ok(user);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<?> editUser(@RequestBody Map<String, Object> newUser, @PathVariable Long id) {

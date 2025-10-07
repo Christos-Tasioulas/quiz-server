@@ -37,6 +37,12 @@ public class UserService {
         return new UserResponse(user);
     }
 
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("Could not find user with email: " + email));
+        return new UserResponse(user);
+    }
+
     public UserResponse editUser(Map<String, Object> newUser, Long id) {
         User user = userRepository.findById(id)
                 .map(existingUser -> {
@@ -46,8 +52,10 @@ public class UserService {
                     if (newUser.containsKey("password"))
                         existingUser.setPassword(passwordEncoder.encode((String) newUser.get("password")).toCharArray());
                     if (newUser.containsKey("username")) existingUser.setUsername((String) newUser.get("username"));
-                    if (newUser.containsKey("role")) existingUser.setRole(UserRoles.valueOf((String) newUser.get("role")));
-                    if (newUser.containsKey("preferredTheme")) existingUser.setPreferredTheme(Themes.valueOf((String) newUser.get("preferredTheme")));
+                    if (newUser.containsKey("role"))
+                        existingUser.setRole(UserRoles.valueOf((String) newUser.get("role")));
+                    if (newUser.containsKey("preferredTheme"))
+                        existingUser.setPreferredTheme(Themes.valueOf((String) newUser.get("preferredTheme")));
                     return userRepository.save(existingUser);
                 })
                 .orElseThrow(() -> new UserNotFoundException(id));
