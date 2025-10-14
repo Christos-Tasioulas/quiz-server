@@ -1,4 +1,4 @@
-package com.example.quiz.repositories;
+package com.example.quiz.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 

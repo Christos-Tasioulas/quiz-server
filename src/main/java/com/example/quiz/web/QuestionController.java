@@ -1,7 +1,8 @@
 package com.example.quiz.web;
 
-import com.example.quiz.dto.QuestionResponse;
-import com.example.quiz.entities.Question;
+import com.example.quiz.dto.request.QuestionRequest;
+import com.example.quiz.dto.response.QuestionResponse;
+import com.example.quiz.entities.Answer;
 import com.example.quiz.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +12,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -26,9 +26,9 @@ public class QuestionController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createQuestion(@RequestBody Question question) {
+    public ResponseEntity<?> createQuestion(@RequestBody QuestionRequest request) {
         try {
-            QuestionResponse questionResponse = questionService.createQuestion(question);
+            QuestionResponse questionResponse = questionService.createQuestion(request);
             URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
@@ -58,9 +58,15 @@ public class QuestionController {
         return ResponseEntity.ok(question);
     }
 
+    @GetMapping("/{id}/answers")
+    public ResponseEntity<?> getAnswersByQuestion(@PathVariable Long id) {
+        List<Answer> answers = questionService.getAnswersByQuestion(id);
+        return ResponseEntity.ok(answers);
+    }
+
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> editQuestion(@RequestBody Map<String, Object> newQuestion, @PathVariable Long id) {
+    public ResponseEntity<?> editQuestion(@RequestBody QuestionRequest newQuestion, @PathVariable Long id) {
         QuestionResponse questionResponse = questionService.editQuestion(newQuestion, id);
         return ResponseEntity.ok(questionResponse);
     }

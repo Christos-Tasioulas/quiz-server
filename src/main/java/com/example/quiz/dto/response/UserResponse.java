@@ -1,4 +1,4 @@
-package com.example.quiz.dto;
+package com.example.quiz.dto.response;
 
 import com.example.quiz.entities.Themes;
 import com.example.quiz.entities.User;

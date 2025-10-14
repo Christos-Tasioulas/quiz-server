@@ -1,10 +1,10 @@
 package com.example.quiz.service;
 
-import com.example.quiz.dto.AuthResponse;
-import com.example.quiz.dto.UserResponse;
+import com.example.quiz.dto.response.AuthResponse;
+import com.example.quiz.dto.response.UserResponse;
 import com.example.quiz.entities.User;
 import com.example.quiz.exceptions.UnauthorizedException;
-import com.example.quiz.repositories.LoginRequest;
+import com.example.quiz.dto.request.LoginRequest;
 import com.example.quiz.repositories.UserRepository;
 import com.example.quiz.security.JwtUtil;
 import lombok.RequiredArgsConstructor;

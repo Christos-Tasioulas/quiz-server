@@ -1,4 +1,4 @@
-package com.example.quiz.dto;
+package com.example.quiz.dto.response;
 
 public record AuthResponse(
         String token,

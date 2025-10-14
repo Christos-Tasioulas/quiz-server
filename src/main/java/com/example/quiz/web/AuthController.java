@@ -1,9 +1,9 @@
 package com.example.quiz.web;
 
-import com.example.quiz.dto.AuthResponse;
+import com.example.quiz.dto.response.AuthResponse;
 import com.example.quiz.entities.User;
 import com.example.quiz.exceptions.UnauthorizedException;
-import com.example.quiz.repositories.LoginRequest;
+import com.example.quiz.dto.request.LoginRequest;
 import com.example.quiz.service.AuthService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;

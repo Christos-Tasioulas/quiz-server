@@ -1,6 +1,6 @@
 package com.example.quiz.web;
 
-import com.example.quiz.dto.UserResponse;
+import com.example.quiz.dto.response.UserResponse;
 import com.example.quiz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

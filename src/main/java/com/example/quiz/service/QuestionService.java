@@ -1,15 +1,16 @@
 package com.example.quiz.service;
 
-import com.example.quiz.dto.QuestionResponse;
+import com.example.quiz.dto.request.QuestionRequest;
+import com.example.quiz.dto.response.QuestionResponse;
+import com.example.quiz.entities.Answer;
 import com.example.quiz.entities.Question;
 import com.example.quiz.exceptions.QuestionNotFoundException;
 import com.example.quiz.repositories.QuestionRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -17,9 +18,21 @@ import java.util.stream.Collectors;
 public class QuestionService {
     private final QuestionRepository questionRepository;
 
-    public QuestionResponse createQuestion(Question question) {
+    @Transactional
+    public QuestionResponse createQuestion(QuestionRequest request) {
+
+        Question question = new Question();
+        question.setQuestion(request.question());
+
         if (questionRepository.existsByQuestion(question.getQuestion())) {
             throw new IllegalArgumentException("Question " + question.getQuestion() + " already exists");
+        }
+
+        if (request.answers() != null) {
+            request.answers().forEach(aReq -> {
+                Answer answer = new Answer(aReq.answer());
+                question.addAnswer(answer); // sets both sides of relationship
+            });
         }
 
         questionRepository.save(question);
@@ -39,25 +52,39 @@ public class QuestionService {
     }
 
     public QuestionResponse getRandomQuestion() {
-        List<Question> questions = questionRepository.findAll();
-        if (questions.isEmpty()) {
-            throw new IllegalStateException("No questions found");
+        Question question = questionRepository.findRandomQuestion();
+        return new QuestionResponse(question);
+    }
+
+    public List<Answer> getAnswersByQuestion(Long id) {
+        Question question = questionRepository.findById(id).orElseThrow(() -> new QuestionNotFoundException(id));
+        return question.getAnswers();
+    }
+
+    @Transactional
+    public QuestionResponse editQuestion(QuestionRequest request, Long id) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new QuestionNotFoundException(id));
+
+        // Only update question text if provided
+        if (request.question() != null && !request.question().isBlank()) {
+            question.setQuestion(request.question());
         }
 
-        Random random = new Random();
-        Question question = questions.get(random.nextInt(questions.size()));
-        return new QuestionResponse(question);
+        // Only update answers if provided (otherwise keep old ones)
+        if (request.answers() != null) {
+            question.getAnswers().clear();
+            request.answers().forEach(aReq -> {
+                Answer answer = new Answer(aReq.answer());
+                question.addAnswer(answer);
+            });
+        }
+
+        Question updated = questionRepository.save(question);
+        return new QuestionResponse(updated);
     }
 
-    public QuestionResponse editQuestion(Map<String, Object> newQuestion, Long id) {
-        Question question = questionRepository.findById(id)
-                .map(existingQuestion -> {
-                    if (newQuestion.containsKey("question")) existingQuestion.setQuestion((String) newQuestion.get("question"));
-                    return questionRepository.save(existingQuestion);
-                }).orElseThrow(() -> new QuestionNotFoundException(id));
 
-        return new QuestionResponse(question);
-    }
 
     public void deleteQuestion(Long id) {
         if (!questionRepository.existsById(id)) {

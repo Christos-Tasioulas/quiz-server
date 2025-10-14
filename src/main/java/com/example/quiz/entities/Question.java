@@ -3,6 +3,8 @@ package com.example.quiz.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity @Data
@@ -14,6 +16,10 @@ public class Question {
 
     @Column(unique = true)
     private String question;
+
+    // One question has many answers
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
 
     public Question() {
     }
@@ -37,9 +43,30 @@ public class Question {
 
     @Override
     public String toString() {
-        return "Question: {" +
+
+        String questionString = "Question: {" +
                 "id=" + id +
                 ", question='" + question + '\'' +
                 '}';
+
+        StringBuilder answerBuilder = new StringBuilder();
+        int i = 0;
+        for(Answer answer : answers) {
+            i++;
+            answerBuilder.append(i).append(". ").append(answer.toString());
+        }
+
+        return questionString + answerBuilder;
+    }
+
+    // --- Relationship helpers ---
+    public void addAnswer(Answer answer) {
+        answers.add(answer);
+        answer.setQuestion(this);  // Keep both sides in sync
+    }
+
+    public void removeAnswer(Answer answer) {
+        answers.remove(answer);
+        answer.setQuestion(null);
     }
 }

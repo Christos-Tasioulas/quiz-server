@@ -1,6 +1,6 @@
 package com.example.quiz.service;
 
-import com.example.quiz.dto.UserResponse;
+import com.example.quiz.dto.response.UserResponse;
 import com.example.quiz.entities.Themes;
 import com.example.quiz.entities.User;
 import com.example.quiz.entities.UserRoles;
