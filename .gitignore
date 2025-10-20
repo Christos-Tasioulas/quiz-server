@@ -39,3 +39,4 @@ build/
 *.der
 *.keystore
 *.crt
+*.key
