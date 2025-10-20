@@ -40,3 +40,4 @@ build/
 *.keystore
 *.crt
 *.key
+*.csr
