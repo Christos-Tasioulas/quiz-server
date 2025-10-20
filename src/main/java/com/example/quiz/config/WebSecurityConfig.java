@@ -85,7 +85,12 @@ public class WebSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         System.out.println("CORS configuration loaded!");
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://localhost:5174", "https://localhost:5173")); // Frontend URL
+        config.setAllowedOrigins(List.of(
+                "https://localhost:5173",
+                "https://192.168.1.*:*",
+                "https://172.27.16.*:*",
+                "https://10.5.0.*:*"
+        )); // Frontend URL
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Match frontend Axios config
