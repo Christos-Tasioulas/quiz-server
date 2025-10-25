@@ -33,12 +33,12 @@ public class Question {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Question question1)) return false;
-        return Objects.equals(id, question1.id) && Objects.equals(question, question1.question);
+        return Objects.equals(id, question1.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, question);
+        return Objects.hash(id);
     }
 
     @Override
