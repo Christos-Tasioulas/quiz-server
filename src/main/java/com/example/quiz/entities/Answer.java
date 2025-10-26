@@ -30,21 +30,9 @@ public class Answer {
     public Answer() {
     }
 
-    public Answer(String answer) {
-        this.answer = answer;
-        this.score = new HashMap<>();
-        this.score.put("score", null);
-    }
-
     public Answer(String answer, Map<String, Object> score) {
         this.answer = answer;
         this.score = score != null ? score : new HashMap<>();
-    }
-
-    public Answer(Long id, String answer, Question question) {
-        this.id = id;
-        this.answer = answer;
-        this.question = question;
     }
 
     @Override
