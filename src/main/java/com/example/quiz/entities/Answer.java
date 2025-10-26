@@ -2,7 +2,11 @@ package com.example.quiz.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Entity @Data
@@ -19,11 +23,22 @@ public class Answer {
     @JoinColumn(name = "question_id", nullable = false)  // creates the foreign key
     private Question question;
 
+    @Column(columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private Map<String, Object> score;
+
     public Answer() {
     }
 
     public Answer(String answer) {
         this.answer = answer;
+        this.score = new HashMap<>();
+        this.score.put("score", null);
+    }
+
+    public Answer(String answer, Map<String, Object> score) {
+        this.answer = answer;
+        this.score = score != null ? score : new HashMap<>();
     }
 
     public Answer(Long id, String answer, Question question) {

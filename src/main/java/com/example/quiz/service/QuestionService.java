@@ -30,7 +30,7 @@ public class QuestionService {
 
         if (request.answers() != null) {
             request.answers().forEach(aReq -> {
-                Answer answer = new Answer(aReq.answer());
+                Answer answer = new Answer(aReq.answer(), aReq.score());
                 if (question.getAnswers().stream().anyMatch(existing -> existing.getAnswer().equals(answer.getAnswer()))) {
                     throw new IllegalArgumentException("Answer " + answer.getAnswer() + " already exists");
                 }
@@ -94,7 +94,7 @@ public class QuestionService {
                 boolean exists = question.getAnswers().stream()
                         .anyMatch(existing -> existing.getAnswer().equals(aReq.answer()));
                 if (!exists) {
-                    Answer newAnswer = new Answer(aReq.answer());
+                    Answer newAnswer = new Answer(aReq.answer(), aReq.score());
                     question.addAnswer(newAnswer);
                 }
             });
