@@ -31,8 +31,15 @@ public class QuestionService {
         if (request.answers() != null) {
             request.answers().forEach(aReq -> {
                 Answer answer = new Answer(aReq.answer());
+                if (question.getAnswers().stream().anyMatch(existing -> existing.getAnswer().equals(answer.getAnswer()))) {
+                    throw new IllegalArgumentException("Answer " + answer.getAnswer() + " already exists");
+                }
                 question.addAnswer(answer); // sets both sides of relationship
             });
+        }
+
+        if (question.getAnswers().size() <= 1) {
+            throw new IllegalArgumentException("Question must have at least two answers");
         }
 
         questionRepository.save(question);
@@ -91,6 +98,10 @@ public class QuestionService {
                     question.addAnswer(newAnswer);
                 }
             });
+        }
+
+        if (question.getAnswers().size() <= 1) {
+            throw new IllegalArgumentException("Question must have at least two answers");
         }
 
         // --- Save question (cascade handles answers) ---
