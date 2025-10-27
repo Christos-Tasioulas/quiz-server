@@ -1,9 +1,12 @@
 package com.example.quiz.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Entity @Data
@@ -28,9 +31,14 @@ public class User {
     @Enumerated(EnumType.STRING)
     Themes preferredTheme;
 
+    // One user has many runs
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Run> runs = new ArrayList<>();
+
     User() {}
 
-    User(Long id, String username, String firstName, String lastName, String email, char[] password, UserRoles role, Themes preferredTheme) {
+    public User(Long id, String username, String firstName, String lastName, String email, char[] password, UserRoles role, Themes preferredTheme) {
         this.id = id;
         this.username = username;
         this.firstName = firstName;
@@ -39,6 +47,16 @@ public class User {
         this.password = password;
         this.role = role;
         this.preferredTheme = preferredTheme;
+    }
+
+    public void addRun(Run run) {
+        runs.add(run);
+        run.setUser(this);  // Keep both sides in sync
+    }
+
+    public void removeRun(Run run) {
+        runs.remove(run);
+        run.setUser(null);
     }
 
     @Override
