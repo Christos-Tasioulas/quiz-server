@@ -8,9 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Data
@@ -24,6 +22,10 @@ public class Run {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)  // creates the foreign key
     private User user;
+
+    // One run has many questions
+    @OneToMany(mappedBy = "run", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionAnswered> questions = new ArrayList<>();
 
     @Column(columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
@@ -45,6 +47,14 @@ public class Run {
         this.score = score != null ? score : new HashMap<>();
         this.totalQuestions = totalQuestions;
         this.questionsAnswered = 0;
+    }
+
+    public void addQuestionAnswered(QuestionAnswered questionAnswered) {
+        questions.add(questionAnswered);
+    }
+
+    public void removeQuestionAnswered(QuestionAnswered questionAnswered) {
+        questions.remove(questionAnswered);
     }
 
     @Override

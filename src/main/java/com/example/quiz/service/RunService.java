@@ -2,15 +2,19 @@ package com.example.quiz.service;
 
 import com.example.quiz.dto.request.RunRequest;
 import com.example.quiz.dto.response.RunResponse;
+import com.example.quiz.entities.Question;
+import com.example.quiz.entities.QuestionAnswered;
 import com.example.quiz.entities.Run;
 import com.example.quiz.entities.User;
 import com.example.quiz.exceptions.RunNotFoundException;
 import com.example.quiz.exceptions.UserNotFoundException;
+import com.example.quiz.repositories.QuestionRepository;
 import com.example.quiz.repositories.RunRepository;
 import com.example.quiz.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -18,12 +22,31 @@ import java.util.List;
 public class RunService {
     private final RunRepository runRepository;
     private final UserRepository userRepository;
+    private final QuestionRepository questionRepository;
 
     public RunResponse createRun(RunRequest runRequest) {
+        // 1. Fetch user
         User user = userRepository.findById(runRequest.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + runRequest.userId()));
+
+        // 2. Create run
         Run run = new Run(runRequest.score(), runRequest.totalQuestions());
         run.setUser(user);
+
+        // 3. Fetch random questions from the database
+        List<Question> allQuestions = questionRepository.findAll();
+        Collections.shuffle(allQuestions); // randomize
+        List<Question> selectedQuestions = allQuestions.stream()
+                .limit(runRequest.totalQuestions())
+                .toList();
+
+        // 4. Create QuestionAnswered entries
+        for (Question question : selectedQuestions) {
+            QuestionAnswered qa = new QuestionAnswered(run, question);
+            run.getQuestions().add(qa); // add to run's list
+        }
+
+        // 5. Save run (cascade will save QuestionAnswered)
         runRepository.save(run);
         return new RunResponse(run);
     }
