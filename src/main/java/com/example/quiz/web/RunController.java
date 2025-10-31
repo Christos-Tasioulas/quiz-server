@@ -57,6 +57,13 @@ public class RunController {
         return runService.getRunsByUser(id);
     }
 
+    @PutMapping("updateProgress/{id}")
+    @PreAuthorize("@runSecurity.isOwner(#id, authentication.principal.id)")
+    public ResponseEntity<?> updateProgress(@PathVariable Long id) {
+        RunResponse runResponse = runService.updateProgress(id);
+        return ResponseEntity.ok(runResponse);
+    }
+
     @PutMapping("calculateScore/{id}")
     @PreAuthorize("@runSecurity.isOwner(#id, authentication.principal.id)")
     public ResponseEntity<?> calculateScore(@PathVariable Long id) {

@@ -65,6 +65,14 @@ public class RunService {
         return runs.stream().map(RunResponse::new).toList();
     }
 
+    public RunResponse updateProgress(Long id) {
+        Run run = runRepository.findById(id).orElseThrow(() -> new RunNotFoundException(id));
+        List<QuestionAnswered> questionAnswered = run.getQuestions();
+        int questionsAnswered = questionAnswered.stream().filter(QuestionAnswered::isQuestionAnswered).toList().size();
+        run.setQuestionsAnswered(questionsAnswered);
+        return new RunResponse(run);
+    }
+
     public RunResponse calculateScore(Long id) {
         Run run = runRepository.findById(id).orElseThrow(() -> new RunNotFoundException(id));
 
