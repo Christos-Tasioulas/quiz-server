@@ -70,6 +70,7 @@ public class RunService {
         List<QuestionAnswered> questionAnswered = run.getQuestions();
         int questionsAnswered = questionAnswered.stream().filter(QuestionAnswered::isQuestionAnswered).toList().size();
         run.setQuestionsAnswered(questionsAnswered);
+        runRepository.save(run);
         return new RunResponse(run);
     }
 
