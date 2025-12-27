@@ -24,7 +24,7 @@ public class QuestionService {
         Question question = new Question();
         question.setQuestion(request.question());
 
-        if (questionRepository.existsByQuestion(question.getQuestion())) {
+        if (questionRepository.existsByQuestionAndQuizId(question.getQuestion(), question.getQuiz().getId())) {
             throw new IllegalArgumentException("Question " + question.getQuestion() + " already exists");
         }
 
@@ -53,13 +53,19 @@ public class QuestionService {
                 .collect(Collectors.toList());
     }
 
+    public List<QuestionResponse> getQuestionsByQuizId(Long id) {
+        return questionRepository.findQuestionsByQuizId(id).stream()
+                .map(QuestionResponse::new)
+                .collect(Collectors.toList());
+    }
+
     public QuestionResponse getQuestionById(Long id) {
         Question question = questionRepository.findById(id).orElseThrow(() -> new QuestionNotFoundException(id));
         return new QuestionResponse(question);
     }
 
-    public QuestionResponse getRandomQuestion() {
-        Question question = questionRepository.findRandomQuestion();
+    public QuestionResponse getRandomQuestion(Long quizId) {
+        Question question = questionRepository.findRandomQuestionByQuizId(quizId);
         return new QuestionResponse(question);
     }
 
@@ -110,9 +116,6 @@ public class QuestionService {
         // Return DTO
         return new QuestionResponse(updated);
     }
-
-
-
 
     public void deleteQuestion(Long id) {
         if (!questionRepository.existsById(id)) {

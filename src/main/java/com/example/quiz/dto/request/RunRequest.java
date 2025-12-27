@@ -8,6 +8,7 @@ import java.util.Map;
 @JsonInclude
 public record RunRequest(
         @NotNull Long userId,
+        @NotNull Long quizId,
         Map<String, Object> score,
         @NotNull int totalQuestions,
         Integer questionsAnswered

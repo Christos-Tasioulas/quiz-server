@@ -57,6 +57,12 @@ public class RunController {
         return runService.getRunsByUser(id);
     }
 
+    @GetMapping("/getRunsByQuiz/{id}")
+    @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
+    public List<RunResponse> getRunsByQuiz(@PathVariable Long id) {
+        return runService.getRunsByQuiz(id);
+    }
+
     @PutMapping("updateProgress/{id}")
     @PreAuthorize("@runSecurity.isOwner(#id, authentication.principal.id)")
     public ResponseEntity<?> updateProgress(@PathVariable Long id) {

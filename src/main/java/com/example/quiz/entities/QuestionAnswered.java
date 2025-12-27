@@ -1,7 +1,7 @@
 package com.example.quiz.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Objects;
 

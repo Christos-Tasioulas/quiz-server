@@ -11,6 +11,7 @@ import java.util.Map;
 public class RunResponse {
     private Long id;
     private String username;
+    private String quizName;
     private int totalQuestions;
     private int questionsAnswered;
     private Map<String, Object> score;
@@ -22,6 +23,7 @@ public class RunResponse {
     public RunResponse(Run run) {
         this.id = run.getId();
         this.username = run.getUser().getUsername();
+        this.quizName = run.getQuiz().getName();
         this.totalQuestions = run.getTotalQuestions();
         this.questionsAnswered = run.getQuestionsAnswered();
         this.score = run.getScore();

@@ -8,5 +8,5 @@ import java.util.List;
 public interface RunRepository extends JpaRepository<Run, Long> {
     List<Run> findRunByUserId(Long userId);
 
-
+    List<Run> findRunByQuizId(Long quizId);
 }

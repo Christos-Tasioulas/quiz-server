@@ -34,7 +34,7 @@ public class RunService {
         run.setUser(user);
 
         // 3. Fetch random questions from the database
-        List<Question> allQuestions = questionRepository.findAll();
+        List<Question> allQuestions = questionRepository.findQuestionsByQuizId(runRequest.quizId());
         Collections.shuffle(allQuestions); // randomize
         List<Question> selectedQuestions = allQuestions.stream()
                 .limit(runRequest.totalQuestions())
@@ -62,6 +62,11 @@ public class RunService {
 
     public List<RunResponse> getRunsByUser(Long id) {
         List<Run> runs = runRepository.findRunByUserId(id);
+        return runs.stream().map(RunResponse::new).toList();
+    }
+
+    public List<RunResponse> getRunsByQuiz(Long id) {
+        List<Run> runs = runRepository.findRunByQuizId(id);
         return runs.stream().map(RunResponse::new).toList();
     }
 

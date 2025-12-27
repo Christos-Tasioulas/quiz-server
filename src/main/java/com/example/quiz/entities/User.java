@@ -2,14 +2,15 @@ package com.example.quiz.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Entity @Data
+@Entity
+@Data
 @Table(name = "users")
 public class User {
     @Id

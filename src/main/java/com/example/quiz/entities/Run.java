@@ -23,6 +23,10 @@ public class Run {
     @JoinColumn(name = "user_id", nullable = false)  // creates the foreign key
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quiz_id", nullable = false) // creates the foreign key
+    private Quiz quiz;
+
     // One run has many questions
     @OneToMany(mappedBy = "run", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuestionAnswered> questions = new ArrayList<>();

@@ -37,7 +37,7 @@ public class QuestionAnsweredController {
         return ResponseEntity.ok(questionAnsweredResponse);
     }
 
-    @PutMapping("/removeAnswer/{id}")
+    @DeleteMapping("/removeAnswer/{id}")
     public ResponseEntity<?> removeAnswer(@PathVariable Long id, @RequestBody QuestionAnsweredRequest questionAnsweredRequest) {
         QuestionAnsweredResponse questionAnsweredResponse = questionAnsweredService.removeAnswer(id, questionAnsweredRequest);
         return ResponseEntity.ok(questionAnsweredResponse);

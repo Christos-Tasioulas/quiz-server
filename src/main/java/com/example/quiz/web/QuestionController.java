@@ -52,9 +52,14 @@ public class QuestionController {
         return ResponseEntity.ok(question);
     }
 
-    @GetMapping("/randomQuestion")
-    public ResponseEntity<?> getRandomQuestion() {
-        QuestionResponse question = questionService.getRandomQuestion();
+    @GetMapping("/questionsByQuiz/{id}")
+    public List<QuestionResponse> getQuestionsByQuiz(@PathVariable Long id) {
+        return questionService.getQuestionsByQuizId(id);
+    }
+
+    @GetMapping("/randomQuestion/{quizId}")
+    public ResponseEntity<?> getRandomQuestion(@PathVariable Long quizId) {
+        QuestionResponse question = questionService.getRandomQuestion(quizId);
         return ResponseEntity.ok(question);
     }
 
