@@ -40,6 +40,6 @@ public class QuestionAnsweredController {
     @DeleteMapping("/removeAnswer/{id}")
     public ResponseEntity<?> removeAnswer(@PathVariable Long id, @RequestBody QuestionAnsweredRequest questionAnsweredRequest) {
         QuestionAnsweredResponse questionAnsweredResponse = questionAnsweredService.removeAnswer(id, questionAnsweredRequest);
-        return ResponseEntity.ok(questionAnsweredResponse);
+        return ResponseEntity.noContent().build();
     }
 }

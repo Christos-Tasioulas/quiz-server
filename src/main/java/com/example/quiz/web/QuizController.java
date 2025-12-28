@@ -61,7 +61,7 @@ public class QuizController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteQuiz(@PathVariable Long id) {
         quizService.deleteQuiz(id);
-        return ResponseEntity.ok("Quiz deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 
 }

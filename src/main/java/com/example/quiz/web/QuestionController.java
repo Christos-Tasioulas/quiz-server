@@ -80,6 +80,6 @@ public class QuestionController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
-        return ResponseEntity.ok("Question deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 }

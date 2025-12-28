@@ -81,7 +81,7 @@ public class RunController {
     @PreAuthorize("hasRole('ADMIN') or @runSecurity.isOwner(#id, authentication.principal.id)")
     public ResponseEntity<?> deleteRun(@PathVariable Long id) {
         runService.deleteRun(id);
-        return ResponseEntity.ok("Run deleted successfully");
+        return ResponseEntity.noContent().build();
     }
 }
 
