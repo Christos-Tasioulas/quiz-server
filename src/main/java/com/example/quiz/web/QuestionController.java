@@ -1,85 +1,44 @@
 package com.example.quiz.web;
 
-import com.example.quiz.dto.request.QuestionRequest;
 import com.example.quiz.dto.response.QuestionResponse;
-import com.example.quiz.entities.Answer;
-import com.example.quiz.service.QuestionService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.example.quiz.service.QuestionQueryService;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions")
+@RequiredArgsConstructor
+@Transactional
 public class QuestionController {
 
-    @Autowired
-    private final QuestionService questionService;
+    private final QuestionQueryService questionQueryService;
 
-    public QuestionController(QuestionService questionService) {
-        this.questionService = questionService;
-    }
-
-    @PostMapping
+    @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createQuestion(@RequestBody QuestionRequest request) {
-        try {
-            QuestionResponse questionResponse = questionService.createQuestion(request);
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(questionResponse.getId())
-                    .toUri();
-            return ResponseEntity.created(location).body(questionResponse);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public QuestionResponse getQuestionById(@PathVariable Long id) {
+        return questionQueryService.getById(id);
     }
 
-    @GetMapping()
-    @PreAuthorize("hasRole('ADMIN')") // Requires ADMIN role
-    public List<QuestionResponse> getAllQuestions() {
-        return questionService.getAllQuestions();
-    }
-
-    @GetMapping("/questionById/{id}")
-    public ResponseEntity<?> getQuestionById(@PathVariable Long id) {
-        QuestionResponse question = questionService.getQuestionById(id);
-        return ResponseEntity.ok(question);
-    }
-
-    @GetMapping("/questionsByQuiz/{id}")
-    public List<QuestionResponse> getQuestionsByQuiz(@PathVariable Long id) {
-        return questionService.getQuestionsByQuizId(id);
-    }
-
-    @GetMapping("/randomQuestion/{quizId}")
-    public ResponseEntity<?> getRandomQuestion(@PathVariable Long quizId) {
-        QuestionResponse question = questionService.getRandomQuestion(quizId);
-        return ResponseEntity.ok(question);
-    }
-
-    @GetMapping("/{id}/answers")
-    public ResponseEntity<?> getAnswersByQuestion(@PathVariable Long id) {
-        List<Answer> answers = questionService.getAnswersByQuestion(id);
-        return ResponseEntity.ok(answers);
-    }
-
-    @PutMapping("/{id}")
+    @GetMapping("/by-quiz/{quizId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> editQuestion(@RequestBody QuestionRequest newQuestion, @PathVariable Long id) {
-        QuestionResponse questionResponse = questionService.editQuestion(newQuestion, id);
-        return ResponseEntity.ok(questionResponse);
+    public List<QuestionResponse> getQuestionsByQuiz(
+            @PathVariable Long quizId
+    ) {
+        return questionQueryService.getByQuiz(quizId);
     }
 
-    @DeleteMapping("/{id}")
+    @GetMapping("/random/{quizId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
-        questionService.deleteQuestion(id);
-        return ResponseEntity.noContent().build();
+    public QuestionResponse getRandomQuestion(
+            @PathVariable Long quizId
+    ) {
+        return questionQueryService.getRandom(quizId);
     }
 }
