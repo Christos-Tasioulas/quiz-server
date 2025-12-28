@@ -13,7 +13,12 @@ import java.util.Map;
 import java.util.Objects;
 
 @Entity
-@Table(name = "answers")
+@Table(
+        name = "answers",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uq_question_answer", columnNames = {"question_id", "answer"})
+        }
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Answer {

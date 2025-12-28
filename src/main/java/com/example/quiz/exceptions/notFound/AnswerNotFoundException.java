@@ -1,4 +1,4 @@
-package com.example.quiz.exceptions;
+package com.example.quiz.exceptions.notFound;
 
 public class AnswerNotFoundException extends RuntimeException {
     public AnswerNotFoundException(String message) {

@@ -4,7 +4,7 @@ import com.example.quiz.dto.response.UserResponse;
 import com.example.quiz.entities.Themes;
 import com.example.quiz.entities.User;
 import com.example.quiz.entities.UserRoles;
-import com.example.quiz.exceptions.UserNotFoundException;
+import com.example.quiz.exceptions.notFound.UserNotFoundException;
 import com.example.quiz.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

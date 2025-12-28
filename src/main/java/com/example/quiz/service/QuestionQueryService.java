@@ -2,7 +2,7 @@ package com.example.quiz.service;
 
 import com.example.quiz.dto.response.QuestionResponse;
 import com.example.quiz.entities.Question;
-import com.example.quiz.exceptions.QuestionNotFoundException;
+import com.example.quiz.exceptions.notFound.QuestionNotFoundException;
 import com.example.quiz.repositories.QuestionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

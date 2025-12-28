@@ -1,7 +1,7 @@
 package com.example.quiz.service;
 
 import com.example.quiz.entities.User;
-import com.example.quiz.exceptions.UserNotFoundException;
+import com.example.quiz.exceptions.notFound.UserNotFoundException;
 import com.example.quiz.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

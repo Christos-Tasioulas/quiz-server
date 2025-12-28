@@ -1,6 +1,7 @@
 package com.example.quiz.web;
 
 import com.example.quiz.dto.request.question.CreateQuestionRequest;
+import com.example.quiz.dto.request.question.UpdateQuestionRequest;
 import com.example.quiz.dto.request.quiz.CreateQuizRequest;
 import com.example.quiz.dto.request.quiz.CreateQuizWithQuestionsRequest;
 import com.example.quiz.dto.response.QuestionResponse;
@@ -94,6 +95,17 @@ public class QuizController {
     ) {
         return quizService.addQuestion(quizId, request);
     }
+
+    @PutMapping("/{quizId}/questions/{questionId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public QuestionResponse updateQuestion(
+            @PathVariable Long quizId,
+            @PathVariable Long questionId,
+            @Valid @RequestBody UpdateQuestionRequest request
+    ) {
+        return quizService.updateQuestion(quizId, questionId, request);
+    }
+
 
     @DeleteMapping("/{quizId}/questions/{questionId}")
     @PreAuthorize("hasRole('ADMIN')")

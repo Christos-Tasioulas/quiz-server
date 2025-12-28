@@ -1,6 +1,6 @@
-package com.example.quiz.exceptions.advice;
+package com.example.quiz.exceptions.advice.notFound;
 
-import com.example.quiz.exceptions.QuestionNotFoundException;
+import com.example.quiz.exceptions.notFound.UserNotFoundException;
 import com.example.quiz.utils.common.BaseAdvice;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.time.LocalDateTime;
 
 @RestControllerAdvice
-public class QuestionNotFoundAdvice extends BaseAdvice {
+public class UserNotFoundAdvice extends BaseAdvice {
 
-    @ExceptionHandler(QuestionNotFoundException.class)
+    @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    ErrorResponse questionNotFoundHandler(QuestionNotFoundException ex) {
+    ErrorResponse userNotFoundHandler(UserNotFoundException ex) {
         return new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(),
@@ -22,3 +22,4 @@ public class QuestionNotFoundAdvice extends BaseAdvice {
         );
     }
 }
+

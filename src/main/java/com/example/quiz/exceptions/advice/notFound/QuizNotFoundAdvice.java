@@ -1,6 +1,6 @@
-package com.example.quiz.exceptions.advice;
+package com.example.quiz.exceptions.advice.notFound;
 
-import com.example.quiz.exceptions.QuizNotFoundException;
+import com.example.quiz.exceptions.notFound.QuizNotFoundException;
 import com.example.quiz.utils.common.BaseAdvice;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
