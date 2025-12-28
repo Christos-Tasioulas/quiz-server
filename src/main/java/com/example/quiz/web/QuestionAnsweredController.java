@@ -27,8 +27,9 @@ public class QuestionAnsweredController {
     }
 
     @GetMapping("/questionsAnsweredByRun/{id}")
-    public List<QuestionAnsweredResponse> getQuestionsAnsweredByRun(@PathVariable Long id) {
-        return questionAnsweredService.getQuestionsAnsweredByRun(id);
+    public ResponseEntity<List<QuestionAnsweredResponse>> getQuestionsAnsweredByRun(@PathVariable Long id) {
+        List<QuestionAnsweredResponse> questionAnsweredResponses =  questionAnsweredService.getQuestionsAnsweredByRun(id);
+        return ResponseEntity.ok(questionAnsweredResponses);
     }
 
     @PutMapping("/answer/{id}")
