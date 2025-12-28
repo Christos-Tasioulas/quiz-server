@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/quizzes")
@@ -36,6 +37,12 @@ public class QuizController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<QuizResponse> getAllQuizzes() {
+        return quizService.getAllQuizzes();
     }
 
     @GetMapping("/getQuizById/{id}")

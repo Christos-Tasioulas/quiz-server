@@ -46,6 +46,12 @@ public class QuizService {
         return new QuizResponse(quiz);
     }
 
+    public List<QuizResponse> getAllQuizzes() {
+        return quizRepository.findAll().stream()
+                .map(QuizResponse::new)
+                .collect(Collectors.toList());
+    }
+
     public QuizResponse getQuizById(Long id) {
         Quiz quiz = quizRepository.findById(id)
                 .orElseThrow(() -> new QuizNotFoundException(id));
