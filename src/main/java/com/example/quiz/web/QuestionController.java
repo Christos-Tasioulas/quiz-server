@@ -4,6 +4,7 @@ import com.example.quiz.dto.response.QuestionResponse;
 import com.example.quiz.service.QuestionQueryService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,23 +23,26 @@ public class QuestionController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public QuestionResponse getQuestionById(@PathVariable Long id) {
-        return questionQueryService.getById(id);
+    public ResponseEntity<QuestionResponse> getQuestionById(@PathVariable Long id) {
+        QuestionResponse question = questionQueryService.getById(id);
+        return ResponseEntity.ok(question);
     }
 
     @GetMapping("/by-quiz/{quizId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<QuestionResponse> getQuestionsByQuiz(
-            @PathVariable Long quizId
-    ) {
-        return questionQueryService.getByQuiz(quizId);
+    public ResponseEntity<List<QuestionResponse>> getQuestionsByQuiz(@PathVariable Long quizId) {
+        List<QuestionResponse> questions = questionQueryService.getByQuiz(quizId);
+        if (questions.isEmpty()) {
+            return ResponseEntity.noContent().build();  // 204 if no questions found
+        }
+        return ResponseEntity.ok(questions);
     }
 
     @GetMapping("/random/{quizId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public QuestionResponse getRandomQuestion(
-            @PathVariable Long quizId
-    ) {
-        return questionQueryService.getRandom(quizId);
+    public ResponseEntity<QuestionResponse> getRandomQuestion(@PathVariable Long quizId) {
+        QuestionResponse question = questionQueryService.getRandom(quizId);
+        return ResponseEntity.ok(question);
     }
 }
+

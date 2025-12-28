@@ -21,7 +21,7 @@ public class QuestionAnsweredController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getQuestionAnsweredById(@PathVariable Long id) {
+    public ResponseEntity<QuestionAnsweredResponse> getQuestionAnsweredById(@PathVariable Long id) {
         QuestionAnsweredResponse questionAnsweredResponse = questionAnsweredService.getQuestionAnsweredById(id);
         return ResponseEntity.ok(questionAnsweredResponse);
     }
@@ -32,14 +32,14 @@ public class QuestionAnsweredController {
     }
 
     @PutMapping("/answer/{id}")
-    public ResponseEntity<?> answerQuestion(@PathVariable Long id, @RequestBody QuestionAnsweredRequest questionAnsweredRequest) {
+    public ResponseEntity<QuestionAnsweredResponse> answerQuestion(@PathVariable Long id, @RequestBody QuestionAnsweredRequest questionAnsweredRequest) {
         QuestionAnsweredResponse questionAnsweredResponse = questionAnsweredService.answerQuestion(id, questionAnsweredRequest);
         return ResponseEntity.ok(questionAnsweredResponse);
     }
 
-    @DeleteMapping("/removeAnswer/{id}")
-    public ResponseEntity<?> removeAnswer(@PathVariable Long id, @RequestBody QuestionAnsweredRequest questionAnsweredRequest) {
+    @PutMapping("/removeAnswer/{id}")
+    public ResponseEntity<QuestionAnsweredResponse> removeAnswer(@PathVariable Long id, @RequestBody QuestionAnsweredRequest questionAnsweredRequest) {
         QuestionAnsweredResponse questionAnsweredResponse = questionAnsweredService.removeAnswer(id, questionAnsweredRequest);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(questionAnsweredResponse);
     }
 }

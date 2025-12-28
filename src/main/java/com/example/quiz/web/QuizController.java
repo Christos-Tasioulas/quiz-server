@@ -49,33 +49,45 @@ public class QuizController {
     public ResponseEntity<QuizResponse> createQuizWithQuestions(
             @Valid @RequestBody CreateQuizWithQuestionsRequest request
     ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(new QuizResponse(quizService.createQuizWithQuestions(request)));
+        Quiz quiz = quizService.createQuizWithQuestions(request);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(quiz.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(new QuizResponse(quiz));
     }
 
     @GetMapping
-    public List<QuizResponse> getAllQuizzes() {
-        return quizService.getAllQuizzes();
+    public ResponseEntity<List<QuizResponse>> getAllQuizzes() {
+        List<QuizResponse> quizzes = quizService.getAllQuizzes();
+        if (quizzes.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(quizzes);
     }
 
     @GetMapping("/{id}")
-    public QuizResponse getQuizById(@PathVariable Long id) {
-        return quizService.getQuizById(id);
+    public ResponseEntity<QuizResponse> getQuizById(@PathVariable Long id) {
+        QuizResponse quiz = quizService.getQuizById(id);
+        return ResponseEntity.ok(quiz);
     }
 
     @GetMapping("/by-name/{name}")
-    public QuizResponse getQuizByName(@PathVariable String name) {
-        return quizService.getQuizByName(name);
+    public ResponseEntity<QuizResponse> getQuizByName(@PathVariable String name) {
+        QuizResponse quiz = quizService.getQuizByName(name);
+        return ResponseEntity.ok(quiz);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public QuizResponse updateQuiz(
+    public ResponseEntity<QuizResponse> updateQuiz(
             @PathVariable Long id,
             @Valid @RequestBody CreateQuizRequest request
     ) {
-        return quizService.updateQuiz(id, request);
+        QuizResponse updatedQuiz = quizService.updateQuiz(id, request);
+        return ResponseEntity.ok(updatedQuiz);
     }
 
     @DeleteMapping("/{id}")
@@ -89,23 +101,24 @@ public class QuizController {
 
     @PostMapping("/{quizId}/questions")
     @PreAuthorize("hasRole('ADMIN')")
-    public QuestionResponse addQuestion(
+    public ResponseEntity<QuestionResponse> addQuestion(
             @PathVariable Long quizId,
             @Valid @RequestBody CreateQuestionRequest request
     ) {
-        return quizService.addQuestion(quizId, request);
+        QuestionResponse question = quizService.addQuestion(quizId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(question);
     }
 
     @PutMapping("/{quizId}/questions/{questionId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public QuestionResponse updateQuestion(
+    public ResponseEntity<QuestionResponse> updateQuestion(
             @PathVariable Long quizId,
             @PathVariable Long questionId,
             @Valid @RequestBody UpdateQuestionRequest request
     ) {
-        return quizService.updateQuestion(quizId, questionId, request);
+        QuestionResponse question = quizService.updateQuestion(quizId, questionId, request);
+        return ResponseEntity.ok(question);
     }
-
 
     @DeleteMapping("/{quizId}/questions/{questionId}")
     @PreAuthorize("hasRole('ADMIN')")

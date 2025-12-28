@@ -1,6 +1,8 @@
 package com.example.quiz.exceptions.notFound;
 
-public class QuestionNotFoundException extends RuntimeException {
+import jakarta.persistence.EntityNotFoundException;
+
+public class QuestionNotFoundException extends EntityNotFoundException {
     public QuestionNotFoundException(String message) {
         super(message);
     }

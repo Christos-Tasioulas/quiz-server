@@ -24,62 +24,62 @@ public class RunController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createRun(@RequestBody RunRequest runRequest) {
-        try {
-            RunResponse runResponse = runService.createRun(runRequest);
-            URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(runResponse.getId())
-                    .toUri();
-            return ResponseEntity.created(location).body(runResponse);
-        } catch (IllegalArgumentException ex) {
-            return ResponseEntity.badRequest().body(ex.getMessage());
-        }
+    public ResponseEntity<RunResponse> createRun(@RequestBody RunRequest runRequest) {
+        RunResponse runResponse = runService.createRun(runRequest);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(runResponse.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(runResponse);
+
     }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public List<RunResponse> getAllRuns() {
-        return runService.getAllRuns();
+    public ResponseEntity<List<RunResponse>> getAllRuns() {
+        List<RunResponse> runs = runService.getAllRuns();
+        return ResponseEntity.ok(runs);
     }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @runSecurity.isOwner(#id, authentication.principal.id)")
-    public ResponseEntity<?> getRunById(@PathVariable Long id) {
+    public ResponseEntity<RunResponse> getRunById(@PathVariable Long id) {
         RunResponse runResponse = runService.getRunById(id);
         return ResponseEntity.ok(runResponse);
     }
 
     @GetMapping("/getRunsByUser/{id}")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
-    public List<RunResponse> getRunsByUser(@PathVariable Long id) {
-        return runService.getRunsByUser(id);
+    public ResponseEntity<List<RunResponse>> getRunsByUser(@PathVariable Long id) {
+        List<RunResponse> runs = runService.getRunsByUser(id);
+        return ResponseEntity.ok(runs);
     }
 
     @GetMapping("/getRunsByQuiz/{id}")
     @PreAuthorize("#id == authentication.principal.id or hasRole('ADMIN')")
-    public List<RunResponse> getRunsByQuiz(@PathVariable Long id) {
-        return runService.getRunsByQuiz(id);
+    public ResponseEntity<List<RunResponse>> getRunsByQuiz(@PathVariable Long id) {
+        List<RunResponse> runs = runService.getRunsByQuiz(id);
+        return ResponseEntity.ok(runs);
     }
 
     @PutMapping("updateProgress/{id}")
     @PreAuthorize("@runSecurity.isOwner(#id, authentication.principal.id)")
-    public ResponseEntity<?> updateProgress(@PathVariable Long id) {
+    public ResponseEntity<RunResponse> updateProgress(@PathVariable Long id) {
         RunResponse runResponse = runService.updateProgress(id);
         return ResponseEntity.ok(runResponse);
     }
 
     @PutMapping("calculateScore/{id}")
     @PreAuthorize("@runSecurity.isOwner(#id, authentication.principal.id)")
-    public ResponseEntity<?> calculateScore(@PathVariable Long id) {
+    public ResponseEntity<RunResponse> calculateScore(@PathVariable Long id) {
         RunResponse runResponse = runService.calculateScore(id);
         return ResponseEntity.ok(runResponse);
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @runSecurity.isOwner(#id, authentication.principal.id)")
-    public ResponseEntity<?> deleteRun(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteRun(@PathVariable Long id) {
         runService.deleteRun(id);
         return ResponseEntity.noContent().build();
     }
