@@ -11,6 +11,8 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
     List<Answer> findByQuestionId(Long questionId);
 
+    boolean existsByQuestionIdAndAnswer(Long questionId, String answer);
+
     @Query(value = "SELECT score FROM answers WHERE id = :id", nativeQuery = true)
     Object getScoreById(Long id);
 }

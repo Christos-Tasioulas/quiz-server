@@ -4,6 +4,7 @@ import com.example.quiz.dto.request.question.CreateQuestionRequest;
 import com.example.quiz.dto.request.question.UpdateQuestionRequest;
 import com.example.quiz.dto.request.quiz.CreateQuizRequest;
 import com.example.quiz.dto.request.quiz.CreateQuizWithQuestionsRequest;
+import com.example.quiz.dto.request.quiz.UpdateQuizWithQuestionsRequest;
 import com.example.quiz.dto.response.QuestionResponse;
 import com.example.quiz.dto.response.QuizResponse;
 import com.example.quiz.entities.Quiz;
@@ -88,6 +89,16 @@ public class QuizController {
     ) {
         QuizResponse updatedQuiz = quizService.updateQuiz(id, request);
         return ResponseEntity.ok(updatedQuiz);
+    }
+
+    @PutMapping("/bulk/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<QuizResponse> updateQuizWithQuestions(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateQuizWithQuestionsRequest request
+    ) {
+        QuizResponse quizResponse = quizService.editQuizWithQuestions(id, request);
+        return ResponseEntity.ok(quizResponse);
     }
 
     @DeleteMapping("/{id}")

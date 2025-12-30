@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 public record UpdateQuestionRequest(
+        Long id,
         @NotBlank String question,
         @NotEmpty List<AnswerRequest> answers
 ) {}

@@ -5,6 +5,7 @@ import com.example.quiz.dto.request.question.CreateQuestionRequest;
 import com.example.quiz.dto.request.question.UpdateQuestionRequest;
 import com.example.quiz.dto.request.quiz.CreateQuizRequest;
 import com.example.quiz.dto.request.quiz.CreateQuizWithQuestionsRequest;
+import com.example.quiz.dto.request.quiz.UpdateQuizWithQuestionsRequest;
 import com.example.quiz.dto.response.QuestionResponse;
 import com.example.quiz.dto.response.QuizResponse;
 import com.example.quiz.entities.Question;
@@ -16,10 +17,13 @@ import com.example.quiz.exceptions.notFound.QuizNotFoundException;
 import com.example.quiz.repositories.QuestionRepository;
 import com.example.quiz.repositories.QuizRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -101,6 +105,44 @@ public class QuizService {
         quiz.rename(request.name());
         return new QuizResponse(quiz);
     }
+
+    @Transactional
+    public QuizResponse editQuizWithQuestions(Long quizId, @Valid UpdateQuizWithQuestionsRequest request) {
+        Quiz quiz = quizRepository.findById(quizId)
+                .orElseThrow(() -> new QuizNotFoundException(quizId));
+
+        quiz.rename(request.name());
+
+        Map<Long, Question> existingQuestionsById = quiz.getQuestions().stream()
+                .filter(q -> q.getId() != null)
+                .collect(Collectors.toMap(Question::getId, q -> q));
+
+        List<Question> updatedQuestions = new ArrayList<>();
+
+        for (UpdateQuestionRequest qReq : request.questions()) {
+            Question question;
+            if (qReq.id() != null && existingQuestionsById.containsKey(qReq.id())) {
+                question = existingQuestionsById.get(qReq.id());
+                question.update(qReq); // updates existing question + answers
+            } else {
+                // NEW question
+                question = new Question(qReq);
+                question.setQuiz(quiz);
+            }
+            updatedQuestions.add(question);
+        }
+
+        // Remove deleted questions
+        quiz.getQuestions().clear();
+        quiz.getQuestions().addAll(updatedQuestions);
+
+        // Save quiz (cascade = ALL will persist questions & answers)
+        Quiz savedQuiz = quizRepository.save(quiz);
+
+        return new QuizResponse(savedQuiz);
+    }
+
+
 
     public void deleteQuiz(Long id) {
         Quiz quiz = quizRepository.findById(id)

@@ -16,7 +16,7 @@ import java.util.Objects;
 @Table(
         name = "answers",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uq_question_answer", columnNames = {"question_id", "answer"})
+                @UniqueConstraint(name = "unique_answer_in_a_question", columnNames = {"question_id", "answer"})
         }
 )
 @Getter
@@ -78,4 +78,16 @@ public class Answer {
     public String toString() {
         return "Answer{id=" + id + ", answer='" + answer + "'}";
     }
+
+    public void update(AnswerRequest aReq) {
+        // Update answer text
+        this.answer = Objects.requireNonNull(aReq.answer());
+
+        // Replace score with new one if provided
+        if (aReq.score() != null) {
+            this.score.clear();
+            this.score.putAll(aReq.score());
+        }
+    }
+
 }

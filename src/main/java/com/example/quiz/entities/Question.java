@@ -1,24 +1,27 @@
 package com.example.quiz.entities;
 
+import com.example.quiz.dto.request.AnswerRequest;
 import com.example.quiz.dto.request.question.CreateQuestionRequest;
 import com.example.quiz.dto.request.question.UpdateQuestionRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(
         name = "questions",
         uniqueConstraints = {
-                @UniqueConstraint(name = "uq_quiz_question", columnNames = {"quiz_id", "question"})
+                @UniqueConstraint(name = "unique_question_in_a_quiz", columnNames = {"quiz_id", "question"})
         }
 )
-
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Question {
@@ -32,6 +35,7 @@ public class Question {
 
     /* ---------------- Relations ---------------- */
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
@@ -50,11 +54,12 @@ public class Question {
         request.answers().forEach(a -> addAnswer(new Answer(a)));
     }
 
-    /* ---------------- Aggregate helpers ---------------- */
-
-    void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
+    public Question(UpdateQuestionRequest request) {
+        this.question = Objects.requireNonNull(request.question());
+        request.answers().forEach(a -> addAnswer(new Answer(a)));
     }
+
+    /* ---------------- Aggregate helpers ---------------- */
 
     public void addAnswer(Answer answer) {
         answers.add(answer);
@@ -68,9 +73,35 @@ public class Question {
 
     public void update(UpdateQuestionRequest request) {
         this.question = request.question();
-        answers.clear();
-        request.answers().forEach(a -> addAnswer(new Answer(a)));
+
+        // Map existing answers by ID for lookup
+        Map<Long, Answer> existingAnswers = answers.stream()
+                .filter(a -> a.getId() != null)
+                .collect(Collectors.toMap(Answer::getId, a -> a));
+
+        List<Answer> updatedAnswers = new ArrayList<>();
+
+        for (AnswerRequest aReq : request.answers()) {
+            if (aReq.id() != null && existingAnswers.containsKey(aReq.id())) {
+                // Update existing answer
+                Answer existing = existingAnswers.get(aReq.id());
+                existing.update(aReq); // implement update in Answer
+                updatedAnswers.add(existing);
+            } else {
+                // Add new answer
+                Answer newAnswer = new Answer(aReq);
+                newAnswer.setQuestion(this);
+                updatedAnswers.add(newAnswer);
+            }
+        }
+
+        // Remove deleted answers
+        answers.removeIf(a -> !updatedAnswers.contains(a));
+        answers.addAll(
+                updatedAnswers.stream().filter(a -> !answers.contains(a)).toList()
+        );
     }
+
 
     /* ---------------- Equality ---------------- */
 
