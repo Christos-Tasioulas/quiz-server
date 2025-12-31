@@ -2,13 +2,12 @@ package com.example.quiz.service;
 
 import com.example.quiz.dto.request.RunRequest;
 import com.example.quiz.dto.response.RunResponse;
-import com.example.quiz.entities.Question;
-import com.example.quiz.entities.QuestionAnswered;
-import com.example.quiz.entities.Run;
-import com.example.quiz.entities.User;
+import com.example.quiz.entities.*;
+import com.example.quiz.exceptions.notFound.QuizNotFoundException;
 import com.example.quiz.exceptions.notFound.RunNotFoundException;
 import com.example.quiz.exceptions.notFound.UserNotFoundException;
 import com.example.quiz.repositories.QuestionRepository;
+import com.example.quiz.repositories.QuizRepository;
 import com.example.quiz.repositories.RunRepository;
 import com.example.quiz.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ import java.util.List;
 public class RunService {
     private final RunRepository runRepository;
     private final UserRepository userRepository;
+    private final QuizRepository quizRepository;
     private final QuestionRepository questionRepository;
 
     public RunResponse createRun(RunRequest runRequest) {
@@ -29,9 +29,13 @@ public class RunService {
         User user = userRepository.findById(runRequest.userId())
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + runRequest.userId()));
 
+        Quiz quiz = quizRepository.findById(runRequest.quizId())
+                .orElseThrow(() -> new QuizNotFoundException("Quiz not found with ID: " + runRequest.quizId()));
+
         // 2. Create run
         Run run = new Run(runRequest.score(), runRequest.totalQuestions());
         run.setUser(user);
+        run.setQuiz(quiz);
 
         // 3. Fetch random questions from the database
         List<Question> allQuestions = questionRepository.findQuestionsByQuizId(runRequest.quizId());
